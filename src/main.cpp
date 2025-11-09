@@ -1,23 +1,31 @@
 #include <Arduino.h>
 #include "wifi_manager.h"
+#include "mqtt_manager.h"
+#include "constant.h"
+
 
 int btnGPIO = 0;
-int btnState = false;
+int btnState = HIGH;
+
 
 void setup() {
-  Serial.begin(115200);
-  delay(10);
-  
-  pinMode(btnGPIO, INPUT);
+  Serial.begin(baudRate);
+  pinMode(btnGPIO, INPUT_PULLUP);
+
   connectToWiFi();
-  // Connexion Wi-Fi via la librairie
-  
+
+  wifiStatus = isWiFiConnected();
+
+  initMQTT();
 }
 
 void loop() {
+  handleMQTT();
+  // Lecture du bouton
   btnState = digitalRead(btnGPIO);
   if (btnState == LOW) {
-    disconnectFromWiFi();
-    delay(1000);
+    Serial.println("[Bouton] Appuyé -> envoi MQTT");
+    client.publish(mqtt_topic, "Bouton appuyé !");
+    delay(500); // anti-rebond
   }
 }
