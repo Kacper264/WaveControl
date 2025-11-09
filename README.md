@@ -1,2 +1,2 @@
 # WaveControl
-Code pour la xiao WagveControl
+Code for XIAO ESP32S3 Plus based on PlatformIO. 
